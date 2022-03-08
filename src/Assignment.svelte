@@ -20,7 +20,7 @@
 
     function removePassword(index) {
         passwords = passwords.filter((pw, idx) => {
-            return idx !== index;
+            return idx !== idx;
         });
     }
 </script>
