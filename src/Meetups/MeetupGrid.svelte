@@ -3,6 +3,8 @@
     import MeetupFilter from "./MeetupFilter.svelte";
     import Button from "../UI/Button.svelte";
     import {createEventDispatcher} from "svelte";
+    import {flip} from "svelte/animate";
+    import {scale} from "svelte/transition";
 
     export let meetups;
 
@@ -34,7 +36,7 @@
      }
 
      @media (min-width: 768px) {
-         section {
+         #meetups {
              grid-template-columns: repeat(2, 1fr);
          }
      }
@@ -45,7 +47,9 @@
 </section>
 
 <section id="meetups">
-    {#each filteredMeetups as meetup}
-        <MeetupItem {...meetup} on:toggle-favorite on:showDetails on:edit/>
+    {#each filteredMeetups as meetup (meetup.id)}
+        <div transition:scale animate:flip={{duration: 300}}>
+            <MeetupItem {...meetup} on:toggle-favorite on:showDetails on:edit/>
+        </div>
     {/each}
 </section>
