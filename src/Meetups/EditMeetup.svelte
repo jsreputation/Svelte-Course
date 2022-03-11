@@ -4,7 +4,7 @@
     import TextInput from '../UI/TextInput.svelte';
     import Button from '../UI/Button.svelte';
     import {isEmpty, isValidEmail} from "../helpers/validtation";
-
+    import meetups from "./meetups-store";
 
     let title = '';
     let subTitle = '';
@@ -24,14 +24,16 @@
     const dispatch = createEventDispatcher();
 
     function submitForm() {
-        dispatch('save', {
+        const newMeetup = {
             title: title,
             subTitle: subTitle,
             address: address,
             email: email,
             description: description,
             imageUrl: imageUrl
-        });
+        };
+        meetups.addMeetup(newMeetup);
+        dispatch('save');
     }
 
     function cancel() {
