@@ -15,7 +15,7 @@
     let imageUrl = '';
     let address = '';
 
-    if(id) {
+    if (id) {
         const unsubscribe = meetups.subscribe((items) => {
             const selectedMeetup = items.find(i => i.id === id);
             title = selectedMeetup.title;
@@ -49,10 +49,27 @@
             imageUrl: imageUrl
         };
 
-        if(id) {
+        if (id) {
             meetups.updateMeetup(id, newMeetup);
         } else {
-            meetups.addMeetup(newMeetup);
+            fetch('https://svelte-course-5c29b-default-rtdb.firebaseio.com/meetups.json', {
+                method: 'POST',
+                body: JSON.stringify({...newMeetup, isFavorite: false}),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then((res) => {
+                if (!res.ok) {
+                    throw new Error('An error occurred, please try again!');
+                }
+                return res.json();
+            }).then((data) => {
+                console.log(data);
+                meetups.addMeetup({...newMeetup, isFavorite: false, id: data.name});
+            }).catch((error) => {
+                console.log(error);
+            })
+            // meetups.addMeetup(newMeetup);
         }
         dispatch('save');
     }
@@ -89,28 +106,28 @@
                 valid={titleValid}
                 validityMessage={"Please enter a valid title."}
                 value={title}
-                on:input={event => {title = event.target.value}} />
+                on:input={event => {title = event.target.value}}/>
         <TextInput
                 id="subtitle"
                 label="Subtitle"
                 value={subTitle}
                 valid={subTitleValid}
                 validityMessage={"Please enter a valid subtitle."}
-                on:input={event => (subTitle = event.target.value)} />
+                on:input={event => (subTitle = event.target.value)}/>
         <TextInput
                 id="address"
                 label="Address"
                 value={address}
                 valid={addressValid}
                 validityMessage={"Please enter a valid address."}
-                on:input={event => (address = event.target.value)} />
+                on:input={event => (address = event.target.value)}/>
         <TextInput
                 id="imageUrl"
                 label="Image URL"
                 value={imageUrl}
                 valid={imageUrlValid}
                 validityMessage={"Please enter a valid url"}
-                on:input={event => (imageUrl = event.target.value)} />
+                on:input={event => (imageUrl = event.target.value)}/>
         <TextInput
                 id="email"
                 label="E-Mail"
@@ -118,7 +135,7 @@
                 value={email}
                 valid={emailValid}
                 validityMessage={"Please enter a valid email."}
-                on:input={event => (email = event.target.value)} />
+                on:input={event => (email = event.target.value)}/>
         <TextInput
                 id="description"
                 label="Description"
@@ -127,12 +144,12 @@
                 rows="3"
                 valid={descriptionValid}
                 validityMessage={"Please enter a valid description"}
-                on:input={event => (description = event.target.value)} />
+                on:input={event => (description = event.target.value)}/>
     </form>
     <div slot="footer">
         <Button on:click={submitForm} disabled={!formIsValid}>Save</Button>
         <Button mode="outline" on:click={cancel}>Cancel</Button>
-        {#if  id}
+        {#if id}
             <Button type="button" on:click={deleteMeetup}>Delete</Button>
         {/if}
     </div>
