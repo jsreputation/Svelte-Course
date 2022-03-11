@@ -6,12 +6,28 @@
     import {isEmpty, isValidEmail} from "../helpers/validtation";
     import meetups from "./meetups-store";
 
+    export let id = null;
+
     let title = '';
     let subTitle = '';
     let email = '';
     let description = '';
     let imageUrl = '';
     let address = '';
+
+    if(id) {
+        const unsubscribe = meetups.subscribe((items) => {
+            const selectedMeetup = items.find(i => i.id === id);
+            title = selectedMeetup.title;
+            subTitle = selectedMeetup.subTitle;
+            email = selectedMeetup.email;
+            description = selectedMeetup.description;
+            imageUrl = selectedMeetup.imageUrl;
+            address = selectedMeetup.address;
+        });
+
+        unsubscribe();
+    }
 
     let titleValid = false;
     let subTitleValid = false;
@@ -32,7 +48,12 @@
             description: description,
             imageUrl: imageUrl
         };
-        meetups.addMeetup(newMeetup);
+
+        if(id) {
+            meetups.updateMeetup(id, newMeetup);
+        } else {
+            meetups.addMeetup(newMeetup);
+        }
         dispatch('save');
     }
 
